@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "sonarsource.sonarlint-vscode",
+    "esbenp.prettier-vscode",
+    "rvest.vs-code-prettier-eslint",
+    "dbaeumer.vscode-eslint"
+  ]
+}
