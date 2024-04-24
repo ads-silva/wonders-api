@@ -9,6 +9,7 @@ const sequelize = new Sequelize(DATABASE_NAME, DATABASE_USER, DATABASE_PASSWORD,
   host: DATABASE_HOST,
   port: DATABASE_PORT,
   dialect: 'mariadb',
+  logging: false,
 });
 
 const models = [userModel, productModel];
