@@ -20,6 +20,14 @@ const populate = async () => {
     },
   ]);
 
+  await getModels().product.bulkCreate([
+    {
+      name: 'pencil',
+      description: 'pencil blue',
+      price: '1.20',
+    },
+  ]);
+
   console.log('Done!');
 };
 
