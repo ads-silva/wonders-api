@@ -21,7 +21,7 @@ for (const model of models) {
 
 // TODO define relantionship between entities
 
-export const startDatabaseConnection = async (forceSync = false) => {
+export const startSequelizeConnection = async (forceSync = false) => {
   try {
     console.log('All models were synchronized successfully.');
     await sequelize.sync({ force: forceSync });
