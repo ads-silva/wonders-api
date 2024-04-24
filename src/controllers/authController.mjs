@@ -9,7 +9,7 @@ const auth = async (req, res) => {
 
   // Hash current password to compare from db
   const passwordHhash = await hashPassword(password, JWT_SECRET_KEY);
-  const existentUser = findUser(email);
+  const existentUser = await findUser(email);
 
   if (!existentUser || passwordHhash !== existentUser.password) {
     res.status(401);
@@ -23,7 +23,7 @@ const auth = async (req, res) => {
     expiresIn: JWT_EXPIRES_IN,
   });
 
-  res.status(201).send({ authToken, user });
+  res.status(201).send({ authToken, user: user.dataValues });
 };
 
 export default auth;
