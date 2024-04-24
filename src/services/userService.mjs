@@ -1,21 +1,8 @@
-const findUser = (email) => {
-  const requesterUserData = {
-    email: 'requester@mail.com',
-    password: 'fed42fb0fabde4000af60bf1f63037905176d6db1df5c2ee6214ee83565de36b',
-    role: 'requester',
-  };
+import { getModels } from '../sequelize/index.mjs';
 
-  const managerUserData = {
-    email: 'manager@mail.com',
-    password: 'fed42fb0fabde4000af60bf1f63037905176d6db1df5c2ee6214ee83565de36b',
-    role: 'manager',
-  };
-  if (email === requesterUserData.email) {
-    return requesterUserData;
-  }
-  if (email === managerUserData.email) {
-    return managerUserData;
-  }
-  return null;
+const findUser = async (email) => {
+  const user = await getModels().user.findOne({ where: { email } });
+  return user;
 };
+
 export default findUser;
