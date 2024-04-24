@@ -11,6 +11,7 @@ services:
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin
     volumes:
+      - ./src/tests/config/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
       - mariadb_data:/var/lib/mysql
     ports:
       - '3306:3306'

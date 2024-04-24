@@ -1,0 +1,2 @@
+CREATE DATABASE IF NOT EXISTS test_e2e;
+GRANT ALL PRIVILEGES ON test_e2e.* TO 'admin'@'%';

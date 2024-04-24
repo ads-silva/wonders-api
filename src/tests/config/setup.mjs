@@ -2,9 +2,13 @@ import { tap } from 'node:test/reporters';
 import { run } from 'node:test';
 import process from 'node:process';
 import app from '../../config/buildApp.mjs';
+import populate from './populate.mjs';
+import { startDatabaseConnection } from '../../sequelize/index.mjs';
 
 let server = {};
-const setup = () => {
+const setup = async () => {
+  await startDatabaseConnection();
+  await populate();
   server = app.listen(3000, () => {
     console.log('Server started on port 3000');
   });
