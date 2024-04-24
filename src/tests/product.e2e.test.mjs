@@ -19,8 +19,7 @@ describe('API Product Test Suite', async () => {
       },
     ]);
     const response = await httpRequest('GET', '/product', undefined, token);
-    console.log(response);
     strictEqual(response.status, 200);
-    strictEqual(response.data.size, 1);
+    strictEqual(response.data.length, 1);
   });
 });

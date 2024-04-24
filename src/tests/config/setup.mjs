@@ -7,7 +7,7 @@ import { startDatabaseConnection } from '../../sequelize/index.mjs';
 
 let server = {};
 const setup = async () => {
-  await startDatabaseConnection();
+  await startDatabaseConnection(true);
   await populate();
   server = app.listen(3000, () => {
     console.log('Server started on port 3000');

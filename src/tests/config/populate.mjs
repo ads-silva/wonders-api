@@ -1,10 +1,6 @@
 import { getModels, getSequelize } from '../../sequelize/index.mjs';
 
 const populate = async () => {
-  console.log('Will rewrite the mariadb example database, adding some dummy data.');
-
-  await getSequelize().sync({ force: true });
-
   await getModels().user.bulkCreate([
     {
       email: 'requester@mail.com',

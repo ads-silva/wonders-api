@@ -18,13 +18,12 @@ for (const model of models) {
   model(sequelize);
 }
 
-await sequelize.sync();
-console.log('All models were synchronized successfully.');
-
 // TODO define relantionship between entities
 
-export const startDatabaseConnection = async () => {
+export const startDatabaseConnection = async (forceSync = false) => {
   try {
+    console.log('All models were synchronized successfully.');
+    await sequelize.sync({ force: forceSync });
     console.log(`Connecting to database..`);
     await sequelize.authenticate();
     console.log('Database connected!');
