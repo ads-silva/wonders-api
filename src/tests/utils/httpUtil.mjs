@@ -1,36 +1,43 @@
 import envConfig from '../../config/envConfig.mjs';
 
-export const fetchWithTimeout = (url, options, timeout = 10000) => {
+export const fetchWithTimeout = ({ url, options, timeout = 10000, signal }) => {
   return new Promise((resolve, reject) => {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => {
-      controller.abort();
-      reject(new Error('Request timeout'));
-    }, timeout);
+    const controller = signal ? { signal } : new AbortController();
+    const timeoutId = signal
+      ? null
+      : setTimeout(() => {
+          controller.abort();
+          reject(new Error('Request timeout'));
+        }, timeout);
 
     fetch(url, { ...options, signal: controller.signal })
       .then((response) => {
-        clearTimeout(timeoutId);
+        timeoutId && clearTimeout(timeoutId);
         resolve(response);
       })
       .catch((error) => {
-        clearTimeout(timeoutId);
+        timeoutId && clearTimeout(timeoutId);
         reject(error);
       });
   });
 };
 
-export async function httpRequest(method, path, data, token) {
+export async function httpRequest({ method, path, payload, token, signal }) {
   const { APP_URL } = envConfig();
   try {
-    const request = await fetchWithTimeout(`${APP_URL}${path}`, {
-      method,
-      ...(data && { body: JSON.stringify(data) }),
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token && { authorization: `Bearer ${token}` }),
+    const request = await fetchWithTimeout({
+      url: `${APP_URL}${path}`,
+      options: {
+        method,
+        ...(payload && { body: JSON.stringify(payload) }),
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { authorization: `Bearer ${token}` }),
+        },
       },
+      signal,
     });
+
     return { data: await request.json(), status: request.status };
   } catch (error) {
     return error;
@@ -38,9 +45,13 @@ export async function httpRequest(method, path, data, token) {
 }
 
 export async function requestAuth(email, password) {
-  const data = await httpRequest('POST', '/auth', {
-    email,
-    password,
+  const data = await httpRequest({
+    method: 'POST',
+    path: '/auth',
+    payload: {
+      email,
+      password,
+    },
   });
   return data;
 }

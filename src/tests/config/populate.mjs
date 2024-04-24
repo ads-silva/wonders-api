@@ -1,6 +1,7 @@
-import { getModels, getSequelize } from '../../sequelize/index.mjs';
+import { getModels } from '../../sequelize/index.mjs';
 
 const populate = async () => {
+  console.log('Start populate...');
   await getModels().user.bulkCreate([
     {
       email: 'requester@mail.com',
@@ -14,7 +15,7 @@ const populate = async () => {
     },
   ]);
 
-  console.log('Done!');
+  console.log('Populate done!');
 };
 
 export default populate;

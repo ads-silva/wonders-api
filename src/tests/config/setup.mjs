@@ -3,7 +3,7 @@ import { run } from 'node:test';
 import process from 'node:process';
 import app from '../../config/buildApp.mjs';
 import populate from './populate.mjs';
-import { startDatabaseConnection } from '../../sequelize/index.mjs';
+import { getSequelize, startDatabaseConnection } from '../../sequelize/index.mjs';
 
 let server = {};
 const setup = async () => {
@@ -12,6 +12,12 @@ const setup = async () => {
   server = app.listen(3000, () => {
     console.log('Server started on port 3000');
   });
+};
+
+const close = () => {
+  server.close();
+  getSequelize().close();
+  process.exit(1);
 };
 
 const basePath = 'src/tests/';
@@ -25,7 +31,5 @@ run({ files, setup, concurrency: false })
     process.exitCode = 1;
   })
   .compose(tap)
-  .on('end', () => {
-    server.close();
-  })
+  .on('end', close)
   .pipe(process.stdout);
