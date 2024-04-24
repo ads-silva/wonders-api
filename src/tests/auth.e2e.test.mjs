@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import { ok, strictEqual } from 'node:assert';
-import { requestAuth } from './utils/httpUtil.mjs';
+import { requestAuth } from './helpers/httpHelper.mjs';
 
 describe('API Auth Test Suite', async () => {
   it('Test success login', async () => {

@@ -1,6 +1,6 @@
 import { describe, it, before, after } from 'node:test';
 import { strictEqual } from 'node:assert';
-import { httpRequest, requestAuth } from './utils/httpUtil.mjs';
+import { httpRequest, requestAuth } from './helpers/httpHelper.mjs';
 import { getModels, getSequelize } from '../sequelize/index.mjs';
 
 let token = '';

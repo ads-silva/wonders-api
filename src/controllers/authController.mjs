@@ -1,5 +1,5 @@
 import jsonwebtoken from 'jsonwebtoken';
-import { hashPassword } from '../utils/encriptUtil.mjs';
+import { hashPassword } from '../helpers/encriptHelper.mjs';
 import findUser from '../services/userService.mjs';
 import envConfig from '../config/envConfig.mjs';
 
