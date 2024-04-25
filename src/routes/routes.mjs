@@ -7,7 +7,7 @@ const authRoutes = () => {
   const router = express.Router();
 
   router.route('/auth').post(auth);
-  router.route('/product').get(authMiddleware(['requester']), getAllProducts);
+  router.route('/product').get(authMiddleware(['requester', 'manager']), getAllProducts);
 
   router.route('/health-check').get((req, res) => {
     res.send({ status: 'ok' });

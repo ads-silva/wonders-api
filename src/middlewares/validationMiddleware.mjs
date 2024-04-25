@@ -12,7 +12,7 @@ const authMiddleware = (roles) => {
 
     const hasAccess = hasUserAccessByRole(token, roles);
     if (!hasAccess) {
-      return res.status(403);
+      return res.status(403).json({ message: 'Permission denied' });
     }
 
     try {
