@@ -1,5 +1,6 @@
 import jsonwebtoken from 'jsonwebtoken';
 import { hashPassword } from '../helpers/encriptHelper.mjs';
+import { getMinimalUserInformation } from '../helpers/authHelper.mjs';
 import findUser from '../services/userService.mjs';
 import envConfig from '../config/envConfig.mjs';
 
@@ -12,18 +13,18 @@ const auth = async (req, res) => {
   const existentUser = await findUser(email);
 
   if (!existentUser || passwordHhash !== existentUser.password) {
-    res.status(401);
-    res.send({ error: 'Invalid credentials' });
+    res.status(401).send({ error: 'Invalid credentials' });
     return;
   }
 
-  const { password: _p, ...user } = existentUser;
+  // Prevent expose sensitive information
+  const user = getMinimalUserInformation(existentUser.dataValues);
 
   const authToken = jsonwebtoken.sign({ email, user }, JWT_SECRET_KEY, {
     expiresIn: JWT_EXPIRES_IN,
   });
 
-  res.status(201).send({ authToken, user: user.dataValues });
+  res.status(201).send({ authToken, user });
 };
 
 export default auth;
