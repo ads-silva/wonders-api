@@ -1,4 +1,4 @@
-import findProducts from '../services/productsService.mjs';
+import { findProducts } from '../services/productService.mjs';
 
 const getAllProducts = async (req, res) => {
   const products = await findProducts();

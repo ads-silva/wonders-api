@@ -3,17 +3,18 @@ import { DataTypes } from 'sequelize';
 const ReservationOrderProductModel = (sequelize) => {
   return sequelize.define('reservationOrderProduct', {
     id: {
+      type: DataTypes.BIGINT,
       primaryKey: true,
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      autoIncrement: true,
+      allowNull: false,
     },
     reservationOrderId: {
       allowNull: false,
-      type: DataTypes.UUID,
+      type: DataTypes.BIGINT,
     },
     productId: {
       allowNull: false,
-      type: DataTypes.UUID,
+      type: DataTypes.BIGINT,
     },
     amount: {
       type: DataTypes.BIGINT,

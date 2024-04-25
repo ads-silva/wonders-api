@@ -3,9 +3,10 @@ import { DataTypes } from 'sequelize';
 const ProductModel = (sequelize) => {
   return sequelize.define('product', {
     id: {
+      type: DataTypes.BIGINT,
       primaryKey: true,
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      autoIncrement: true,
+      allowNull: false,
     },
     name: {
       allowNull: false,
