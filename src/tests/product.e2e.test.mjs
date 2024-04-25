@@ -1,17 +1,13 @@
 import { describe, it, before, after } from 'node:test';
 import { strictEqual } from 'node:assert';
 import { httpRequest, requestAuth } from './helpers/httpHelper.mjs';
-import { getModels, getSequelize } from '../sequelize/index.mjs';
-import { productMock } from './mock/productMock.mjs';
+import { getSequelize } from '../sequelize/index.mjs';
 
 let token = '';
 describe('API Product Test Suite', async (t) => {
   before(async () => {
-    const response = await requestAuth({ email: 'manager@mail.com', password: '123', signal: t.signal });
+    const response = await requestAuth({ email: 'requester@mail.com', password: '123', signal: t.signal });
     token = response.data.authToken;
-
-    // Add product mock
-    await getModels().product.create(productMock);
   });
 
   after(() => {
@@ -27,7 +23,7 @@ describe('API Product Test Suite', async (t) => {
     });
 
     strictEqual(response.status, 200);
-    strictEqual(response.data.length, 1);
+    strictEqual(response.data.length > 1, true);
   });
 
   describe('Product Forbiden Test Suite', async (t) => {

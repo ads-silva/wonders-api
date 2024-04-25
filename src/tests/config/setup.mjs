@@ -21,7 +21,9 @@ const close = () => {
 };
 
 const basePath = 'src/tests/';
-const files = ['auth.e2e.test.mjs', 'product.e2e.test.mjs'].map((file) => `${basePath}${file}`);
+const files = ['auth.e2e.test.mjs', 'product.e2e.test.mjs', 'reservation.e2e.test.mjs'].map(
+  (file) => `${basePath}${file}`,
+);
 
 run({ files, setup, concurrency: false })
   .on('test:fail', () => {
