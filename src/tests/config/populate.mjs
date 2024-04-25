@@ -4,6 +4,11 @@ const populate = async () => {
   console.log('Start populate...');
   await getModels().user.bulkCreate([
     {
+      email: 'admin@mail.com',
+      password: 'fed42fb0fabde4000af60bf1f63037905176d6db1df5c2ee6214ee83565de36b',
+      role: 'admin',
+    },
+    {
       email: 'requester@mail.com',
       password: 'fed42fb0fabde4000af60bf1f63037905176d6db1df5c2ee6214ee83565de36b',
       role: 'requester',
