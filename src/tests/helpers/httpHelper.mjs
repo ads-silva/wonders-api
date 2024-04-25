@@ -22,7 +22,7 @@ export const fetchWithTimeout = ({ url, options, timeout = 5000, signal }) => {
   });
 };
 
-export async function httpRequest({ method, path, payload, token, signal }) {
+export const httpRequest = async ({ method, path, payload, token, signal }) => {
   const { APP_URL } = envConfig();
   try {
     const request = await fetchWithTimeout({
@@ -42,9 +42,9 @@ export async function httpRequest({ method, path, payload, token, signal }) {
   } catch (error) {
     return error;
   }
-}
+};
 
-export async function requestAuth({ email, password, signal }) {
+export const requestAuth = async ({ email, password, signal }) => {
   const data = await httpRequest({
     method: 'POST',
     path: '/auth',
@@ -55,4 +55,4 @@ export async function requestAuth({ email, password, signal }) {
     signal,
   });
   return data;
-}
+};

@@ -1,24 +1,9 @@
 import { getModels } from '../../sequelize/index.mjs';
+import { userSeed } from '../../sequelize/seeds.mjs';
 
 const populate = async () => {
   console.log('Start populate...');
-  await getModels().user.bulkCreate([
-    {
-      email: 'admin@mail.com',
-      password: 'fed42fb0fabde4000af60bf1f63037905176d6db1df5c2ee6214ee83565de36b',
-      role: 'admin',
-    },
-    {
-      email: 'requester@mail.com',
-      password: 'fed42fb0fabde4000af60bf1f63037905176d6db1df5c2ee6214ee83565de36b',
-      role: 'requester',
-    },
-    {
-      email: 'manager@mail.com',
-      password: 'fed42fb0fabde4000af60bf1f63037905176d6db1df5c2ee6214ee83565de36b',
-      role: 'manager',
-    },
-  ]);
+  await getModels().user.bulkCreate(userSeed);
 
   console.log('Populate done!');
 };
