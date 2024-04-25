@@ -45,4 +45,16 @@ describe('API Reservation Test Suite', async (t) => {
     strictEqual(response.status, 400);
     strictEqual(response.data.message, 'No balance for this operation');
   });
+
+  it('Test find a list os reservationOrders', async (t) => {
+    const response = await httpRequest({
+      method: 'GET',
+      path: '/reservation',
+      token,
+      signal: t.signal,
+    });
+
+    strictEqual(response.status, 200);
+    strictEqual(response.data.length > 0, true);
+  });
 });
