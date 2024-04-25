@@ -79,3 +79,8 @@ export const create = async (payload, userId) => {
     throw error;
   }
 };
+
+export const findAll = async () => {
+  const reservationOrders = await getModels().reservationOrder.findAll();
+  return reservationOrders;
+};

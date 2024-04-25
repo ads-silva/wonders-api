@@ -1,6 +1,6 @@
-import { create } from '../services/reservationService.mjs';
+import { create, findAll } from '../services/reservationService.mjs';
 
-export const createReservation = async (req, res) => {
+export const createReservationOrder = async (req, res) => {
   const { body: payload, user } = req;
 
   if (!payload) {
@@ -18,4 +18,9 @@ export const createReservation = async (req, res) => {
       res.status(500).json({ message: 'Internal error' });
     }
   }
+};
+
+export const getReservationOrders = async (req, res) => {
+  const reservationOrders = await findAll();
+  res.status(200).json(reservationOrders);
 };
