@@ -2,19 +2,16 @@ import { describe, it, before, after } from 'node:test';
 import { strictEqual } from 'node:assert';
 import { httpRequest, requestAuth } from './helpers/httpHelper.mjs';
 import { getModels, getSequelize } from '../sequelize/index.mjs';
+import { productMock } from './mock/productMock.mjs';
 
 let token = '';
 describe('API Product Test Suite', async (t) => {
   before(async () => {
     const response = await requestAuth({ email: 'manager@mail.com', password: '123', signal: t.signal });
     token = response.data.authToken;
-    await getModels().product.bulkCreate([
-      {
-        name: 'pencil',
-        description: 'pencil yellow',
-        price: '1.20',
-      },
-    ]);
+
+    // Add product mock
+    await getModels().product.create(productMock);
   });
 
   after(() => {
