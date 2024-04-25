@@ -8,6 +8,7 @@
     "reset:db": "node --env-file=.env src/sequelize/populate.mjs",
     "test:e2e": "node --env-file=.env.test src/tests/config/setup.mjs",
     "start:dev": "node --watch --no-warnings --env-file=.env src/index.mjs",
+    "start:debug": "node --inspect --watch --no-warnings --env-file=.env src/index.mjs",
     "start:prod": "node src/index.mjs",
     "lint": "eslint \"{src,test}/**/*.mjs\"",
     "lint:fix": "npm run lint -- --fix"
