@@ -1,16 +1,16 @@
 import envConfig from '../../config/envConfig.mjs';
 
-export const fetchWithTimeout = ({ url, options, timeout = 10000, signal }) => {
+export const fetchWithTimeout = ({ url, options, timeout = 5000, signal }) => {
   return new Promise((resolve, reject) => {
-    const controller = signal ? { signal } : new AbortController();
-    const timeoutId = signal
-      ? null
-      : setTimeout(() => {
-          controller.abort();
-          reject(new Error('Request timeout'));
-        }, timeout);
+    const controller = new AbortController();
 
-    fetch(url, { ...options, signal: controller.signal })
+    // Setup a timeout for the fetch request
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+      reject(new Error('Request timeout'));
+    }, timeout);
+
+    fetch(url, { ...options, signal: AbortSignal.any([controller.signal, signal]) })
       .then((response) => {
         timeoutId && clearTimeout(timeoutId);
         resolve(response);
@@ -44,7 +44,7 @@ export async function httpRequest({ method, path, payload, token, signal }) {
   }
 }
 
-export async function requestAuth(email, password) {
+export async function requestAuth({ email, password, signal }) {
   const data = await httpRequest({
     method: 'POST',
     path: '/auth',
@@ -52,6 +52,7 @@ export async function requestAuth(email, password) {
       email,
       password,
     },
+    signal,
   });
   return data;
 }
