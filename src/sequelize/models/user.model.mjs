@@ -1,12 +1,11 @@
 import { DataTypes } from 'sequelize';
 
-const userModel = (sequelize) => {
+const UserModel = (sequelize) => {
   return sequelize.define('user', {
     id: {
-      allowNull: false,
-      autoIncrement: true,
       primaryKey: true,
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
     },
     email: {
       allowNull: false,
@@ -24,4 +23,4 @@ const userModel = (sequelize) => {
   });
 };
 
-export default userModel;
+export default UserModel;

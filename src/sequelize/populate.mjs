@@ -1,11 +1,9 @@
-import { startSequelizeConnection, getSequelize, getModels } from './index.mjs';
+import { startSequelizeConnection, getModels } from './index.mjs';
 
 const populate = async () => {
-  await startSequelizeConnection();
+  await startSequelizeConnection(true);
 
   console.log('Will rewrite the mariadb example database, adding some dummy data.');
-
-  await getSequelize().sync({ force: true });
 
   await getModels().user.bulkCreate([
     {

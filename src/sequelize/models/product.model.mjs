@@ -1,16 +1,16 @@
 import { DataTypes } from 'sequelize';
 
-const productModel = (sequelize) => {
+const ProductModel = (sequelize) => {
   return sequelize.define('product', {
     id: {
-      allowNull: false,
-      autoIncrement: true,
       primaryKey: true,
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
     },
     name: {
       allowNull: false,
       type: DataTypes.STRING,
+      unique: true,
     },
     description: {
       allowNull: false,
@@ -20,7 +20,11 @@ const productModel = (sequelize) => {
       allowNull: false,
       type: DataTypes.DECIMAL(10, 2),
     },
+    amount: {
+      type: DataTypes.BIGINT,
+      default: 0,
+    },
   });
 };
 
-export default productModel;
+export default ProductModel;
