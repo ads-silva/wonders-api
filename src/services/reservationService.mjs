@@ -84,3 +84,21 @@ export const findAll = async () => {
   const reservationOrders = await getModels().reservationOrder.findAll();
   return reservationOrders;
 };
+
+export const findByPk = async (id) => {
+  const reservationOrder = await getModels().reservationOrder.findOne({
+    where: { id },
+    include: [
+      {
+        model: getModels().product,
+        attributes: ['id', 'name', 'description'],
+        through: {
+          as: 'reservationOrder',
+          attributes: ['amount', 'createdAt', 'updatedAt'],
+        },
+      },
+    ],
+  });
+
+  return reservationOrder;
+};

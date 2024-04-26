@@ -1,4 +1,4 @@
-import { create, findAll } from '../services/reservationService.mjs';
+import { create, findAll, findByPk } from '../services/reservationService.mjs';
 
 export const createReservationOrder = async (req, res) => {
   const { body: payload, user } = req;
@@ -23,4 +23,15 @@ export const createReservationOrder = async (req, res) => {
 export const getReservationOrders = async (req, res) => {
   const reservationOrders = await findAll();
   res.status(200).json(reservationOrders);
+};
+
+export const getReservationOrder = async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    res.status(404).json({ message: 'Reservation not found' });
+  }
+
+  const reservationOrder = await findByPk(id);
+  res.status(200).json(reservationOrder);
 };
