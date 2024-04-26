@@ -17,9 +17,9 @@ const appllyAssociations = (sequelize) => {
   });
   reservationOrder.belongsTo(user, { as: 'updatedUser' });
 
-  // Define many-to-many association between reservationOrder and product model with additional fields
-  reservationOrder.belongsToMany(product, { through: reservationOrderProduct });
-  product.belongsToMany(reservationOrder, { through: reservationOrderProduct });
+  // Define many-to-many association between reservationOrder and product model
+  reservationOrder.belongsToMany(product, { through: reservationOrderProduct, as: 'products' });
+  product.belongsToMany(reservationOrder, { through: reservationOrderProduct, as: 'reservations' });
 };
 
 export default appllyAssociations;

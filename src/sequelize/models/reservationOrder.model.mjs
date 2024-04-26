@@ -26,6 +26,7 @@ const ReservationOrderModel = (sequelize) => {
     managerComment: {
       allowNull: true,
       type: DataTypes.STRING,
+      default: '',
     },
   });
 };

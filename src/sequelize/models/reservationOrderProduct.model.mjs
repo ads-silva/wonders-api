@@ -8,14 +8,6 @@ const ReservationOrderProductModel = (sequelize) => {
       autoIncrement: true,
       allowNull: false,
     },
-    reservationOrderId: {
-      allowNull: false,
-      type: DataTypes.BIGINT,
-    },
-    productId: {
-      allowNull: false,
-      type: DataTypes.BIGINT,
-    },
     amount: {
       type: DataTypes.BIGINT,
       default: 0,
