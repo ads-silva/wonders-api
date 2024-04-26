@@ -1,13 +1,12 @@
 import { describe, it, before, after } from 'node:test';
 import { strictEqual } from 'node:assert';
-import { httpRequest, requestAuth } from './helpers/httpHelper.mjs';
+import { httpRequest, requestAuthToken } from './helpers/httpHelper.mjs';
 import { getSequelize } from '../sequelize/index.mjs';
 
 let token = '';
 describe('API Product Test Suite', async (t) => {
   before(async () => {
-    const response = await requestAuth({ email: 'requester@mail.com', password: '123', signal: t.signal });
-    token = response.data.authToken;
+    token = await requestAuthToken('requester@mail.com', t);
   });
 
   after(() => {
@@ -26,21 +25,28 @@ describe('API Product Test Suite', async (t) => {
     strictEqual(response.data.length > 1, true);
   });
 
-  describe('Product Forbiden Test Suite', async (t) => {
-    before(async () => {
-      const response = await requestAuth({ email: 'admin@mail.com', password: '123', signal: t.signal });
-      token = response.data.authToken;
+  it('Test find a list os products with reserved amounts', async (t) => {
+    const managerToken = await requestAuthToken('manager@mail.com', t);
+    const response = await httpRequest({
+      method: 'GET',
+      path: '/product',
+      token: managerToken,
+      signal: t.signal,
     });
 
-    it('List os products should return 403 for admin role', async (t) => {
-      const response = await httpRequest({
-        method: 'GET',
-        path: '/product',
-        token,
-        signal: t.signal,
-      });
+    strictEqual(response.status, 200);
+    strictEqual(response?.data[0].amountReserved > 0, true);
+  });
 
-      strictEqual(response.status, 403);
+  it('List os products should return 403 for admin role', async (t) => {
+    const adminToken = await requestAuthToken('admin@mail.com', t);
+    const response = await httpRequest({
+      method: 'GET',
+      path: '/product',
+      token: adminToken,
+      signal: t.signal,
     });
+
+    strictEqual(response.status, 403);
   });
 });
