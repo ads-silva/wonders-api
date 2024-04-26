@@ -5,6 +5,7 @@ import { getSequelize } from '../sequelize/index.mjs';
 import { reservationMock } from './mock/reservationMock.mjs';
 
 let token = '';
+let reservationOrderId = '';
 describe('API Reservation Test Suite', async (t) => {
   before(async () => {
     const response = await requestAuth({ email: 'requester@mail.com', password: '123', signal: t.signal });
@@ -24,8 +25,21 @@ describe('API Reservation Test Suite', async (t) => {
       payload: reservationMock,
     });
 
+    reservationOrderId = response.data.id;
     strictEqual(response.status, 201);
     strictEqual(response.data.status, 'pending');
+  });
+
+  it('Should return a reservationOrder detailed with products', async (t) => {
+    const response = await httpRequest({
+      method: 'GET',
+      path: `/reservation/${reservationOrderId}`,
+      token,
+      signal: t.signal,
+    });
+
+    strictEqual(response.status, 200);
+    strictEqual(response.data.products.length > 0, true);
   });
 
   it('Should return 400 no balance when create a new reservation', async (t) => {
