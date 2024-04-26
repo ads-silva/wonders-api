@@ -15,8 +15,8 @@ const setup = async () => {
 };
 
 const close = () => {
-  server.close();
   getSequelize().close();
+  server.close();
   process.exit(1);
 };
 

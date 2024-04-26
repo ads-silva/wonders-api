@@ -45,7 +45,7 @@ export const httpRequest = async ({ method, path, payload, token, signal }) => {
 };
 
 export const requestAuth = async ({ email, password, signal }) => {
-  const data = await httpRequest({
+  const response = await httpRequest({
     method: 'POST',
     path: '/auth',
     payload: {
@@ -54,5 +54,10 @@ export const requestAuth = async ({ email, password, signal }) => {
     },
     signal,
   });
-  return data;
+  return response;
+};
+
+export const requestAuthToken = async (email, t) => {
+  const { data } = await requestAuth({ email, password: '123', signal: t.signal });
+  return data.authToken;
 };

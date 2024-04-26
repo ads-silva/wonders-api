@@ -1,6 +1,6 @@
 import { describe, it, before, after } from 'node:test';
 import { strictEqual } from 'node:assert';
-import { httpRequest, requestAuth } from './helpers/httpHelper.mjs';
+import { httpRequest, requestAuthToken } from './helpers/httpHelper.mjs';
 import { getSequelize } from '../sequelize/index.mjs';
 import { reservationMock } from './mock/reservationMock.mjs';
 
@@ -8,8 +8,7 @@ let token = '';
 let reservationOrderId = '';
 describe('API Reservation Test Suite', async (t) => {
   before(async () => {
-    const response = await requestAuth({ email: 'requester@mail.com', password: '123', signal: t.signal });
-    token = response.data.authToken;
+    token = await requestAuthToken('requester@mail.com', t);
   });
 
   after(() => {

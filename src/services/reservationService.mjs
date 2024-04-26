@@ -53,16 +53,9 @@ export const create = async (payload, userId) => {
 
     // Update product balances
     const productConsumeBalancePromises = payload.products.map(async (product) => {
-      await getModels().product.update(
-        {
-          amount: getSequelize().literal(`amount - ${product.amount}`),
-        },
-        {
-          where: {
-            id: product.productId,
-          },
-          transaction,
-        },
+      await getModels().product.increment(
+        { amount: -product.amount },
+        { where: { id: product.productId }, transaction },
       );
     });
 
@@ -91,9 +84,10 @@ export const findByPk = async (id) => {
     include: [
       {
         model: getModels().product,
+        as: 'products',
         attributes: ['id', 'name', 'description'],
         through: {
-          as: 'reservationOrder',
+          as: 'reservation',
           attributes: ['amount', 'createdAt', 'updatedAt'],
         },
       },
