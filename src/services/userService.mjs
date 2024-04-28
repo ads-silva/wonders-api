@@ -1,8 +1,11 @@
 import { getModels } from '../sequelize/index.mjs';
 
-const findUser = async (email) => {
+export const findUser = async (email) => {
   const user = await getModels().user.findOne({ where: { email } });
   return user;
 };
 
-export default findUser;
+export const findUserByPk = async (id) => {
+  const user = await getModels().user.findByPk(id);
+  return user.dataValues;
+};

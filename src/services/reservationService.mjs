@@ -96,3 +96,61 @@ export const findByPk = async (id) => {
 
   return reservationOrder;
 };
+
+export const accept = async (id) => {
+  // Find reservation with products
+  const reservationOrder = await findByPk(id);
+
+  // Check reservation status
+  if (reservationOrder.status !== 'pending') {
+    throw new Error('invalid status');
+  }
+
+  // Upadate status
+  reservationOrder.status = 'available';
+  await getModels().reservationOrder.update(
+    {
+      status: 'available',
+    },
+    { where: { id } },
+  );
+
+  return reservationOrder;
+};
+
+export const reject = async (id, reservationOrder) => {
+  let transaction;
+  try {
+    // Start a transaction
+    transaction = await getSequelize().transaction();
+
+    // Mapp products
+    const productsMapped = reservationOrder.products.map((product) => ({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      amount: product.reservation.amount,
+    }));
+
+    // Return the products amount to origin
+    const productConsumeBalancePromises = productsMapped.map(async (product) => {
+      await getModels().product.increment({ amount: +product.amount }, { where: { id: product.id }, transaction });
+    });
+
+    // Wait for all products updates
+    await Promise.all(productConsumeBalancePromises);
+
+    // Update reservation status
+    await getModels().reservationOrder.update({ status: 'rejected' }, { where: { id } });
+    reservationOrder.status = 'rejected';
+
+    // Commit the transaction
+    await transaction.commit();
+
+    return reservationOrder;
+  } catch (error) {
+    // Rollback the transaction if there's an error
+    if (transaction) await transaction.rollback();
+    throw error;
+  }
+};
