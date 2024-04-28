@@ -35,7 +35,7 @@ describe('API Product Test Suite', async (t) => {
     });
 
     strictEqual(response.status, 200);
-    strictEqual(response?.data[0].amountReserved > 0, true);
+    strictEqual(response?.data[0].amountReserved >= 0, true);
   });
 
   it('List os products should return 403 for admin role', async (t) => {

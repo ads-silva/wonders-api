@@ -4,11 +4,13 @@ import { httpRequest, requestAuthToken } from './helpers/httpHelper.mjs';
 import { getSequelize } from '../sequelize/index.mjs';
 import { reservationMock } from './mock/reservationMock.mjs';
 
-let token = '';
+let tokenRequester = '';
+let tokenManager = '';
 let reservationOrderId = '';
 describe('API Reservation Test Suite', async (t) => {
   before(async () => {
-    token = await requestAuthToken('requester@mail.com', t);
+    tokenRequester = await requestAuthToken('requester@mail.com', t);
+    tokenManager = await requestAuthToken('manager@mail.com', t);
   });
 
   after(() => {
@@ -19,7 +21,7 @@ describe('API Reservation Test Suite', async (t) => {
     const response = await httpRequest({
       method: 'POST',
       path: '/reservation',
-      token,
+      token: tokenRequester,
       signal: t.signal,
       payload: reservationMock,
     });
@@ -33,7 +35,7 @@ describe('API Reservation Test Suite', async (t) => {
     const response = await httpRequest({
       method: 'GET',
       path: `/reservation/${reservationOrderId}`,
-      token,
+      token: tokenRequester,
       signal: t.signal,
     });
 
@@ -45,7 +47,7 @@ describe('API Reservation Test Suite', async (t) => {
     const response = await httpRequest({
       method: 'POST',
       path: '/reservation',
-      token,
+      token: tokenRequester,
       signal: t.signal,
       payload: {
         ...reservationMock,
@@ -63,11 +65,75 @@ describe('API Reservation Test Suite', async (t) => {
     const response = await httpRequest({
       method: 'GET',
       path: '/reservation',
-      token,
+      token: tokenRequester,
       signal: t.signal,
     });
 
     strictEqual(response.status, 200);
     strictEqual(response.data.length > 0, true);
+  });
+
+  it('Should return with status rejected', async (t) => {
+    const responseCreate = await httpRequest({
+      method: 'POST',
+      path: '/reservation',
+      token: tokenRequester,
+      signal: t.signal,
+      payload: reservationMock,
+    });
+
+    const reservationId = responseCreate.data.id;
+    const response = await httpRequest({
+      method: 'PATCH',
+      path: `/reservation/${reservationId}/reject`,
+      token: tokenManager,
+      signal: t.signal,
+    });
+
+    strictEqual(response.status, 200);
+    strictEqual(response.data.status, 'rejected');
+  });
+
+  it('Should return 400 if invalid status for reject', async (t) => {
+    const response = await httpRequest({
+      method: 'PATCH',
+      path: `/reservation/1/reject`,
+      token: tokenManager,
+      signal: t.signal,
+    });
+
+    strictEqual(response.status, 400);
+  });
+
+  it('Should return 404 if not found', async (t) => {
+    const response = await httpRequest({
+      method: 'PATCH',
+      path: `/reservation/3123/reject`,
+      token: tokenManager,
+      signal: t.signal,
+    });
+
+    strictEqual(response.status, 404);
+  });
+
+  it('Should return with status available', async (t) => {
+    const responseCreate = await httpRequest({
+      method: 'POST',
+      path: '/reservation',
+      token: tokenRequester,
+      signal: t.signal,
+      payload: reservationMock,
+    });
+
+    const reservationId = responseCreate.data.id;
+    const response = await httpRequest({
+      method: 'PATCH',
+      path: `/reservation/${reservationId}/accept`,
+      token: tokenManager,
+      signal: t.signal,
+    });
+
+    strictEqual(response.status, 200);
+    strictEqual(response.data.status, 'available');
   });
 });
