@@ -6,7 +6,6 @@ import { reservationMock } from './mock/reservationMock.mjs';
 
 let tokenRequester = '';
 let tokenManager = '';
-let reservationOrderId = '';
 describe('API Reservation Test Suite', async (t) => {
   before(async () => {
     tokenRequester = await requestAuthToken('requester@mail.com', t);
@@ -25,13 +24,19 @@ describe('API Reservation Test Suite', async (t) => {
       signal: t.signal,
       payload: reservationMock,
     });
-
-    reservationOrderId = response.data.id;
     strictEqual(response.status, 201);
     strictEqual(response.data.status, 'pending');
   });
 
   it('Should return a reservationOrder detailed with products', async (t) => {
+    const responseCreate = await httpRequest({
+      method: 'POST',
+      path: '/reservation',
+      token: tokenRequester,
+      signal: t.signal,
+      payload: reservationMock,
+    });
+    const reservationOrderId = responseCreate.data.id;
     const response = await httpRequest({
       method: 'GET',
       path: `/reservation/${reservationOrderId}`,
@@ -52,7 +57,7 @@ describe('API Reservation Test Suite', async (t) => {
       payload: {
         ...reservationMock,
         products: [
-          { productId: 1, amount: 50 }, // Original is 30
+          { productId: 1, amount: 20000 }, // Original is 30
         ],
       },
     });
@@ -95,9 +100,25 @@ describe('API Reservation Test Suite', async (t) => {
   });
 
   it('Should return 400 if invalid status for reject', async (t) => {
+    const responseCreate = await httpRequest({
+      method: 'POST',
+      path: '/reservation',
+      token: tokenRequester,
+      signal: t.signal,
+      payload: reservationMock,
+    });
+
+    const reservationId = responseCreate.data.id;
+    await httpRequest({
+      method: 'PATCH',
+      path: `/reservation/${reservationId}/accept`,
+      token: tokenManager,
+      signal: t.signal,
+    });
+
     const response = await httpRequest({
       method: 'PATCH',
-      path: `/reservation/1/reject`,
+      path: `/reservation/${reservationId}/reject`,
       token: tokenManager,
       signal: t.signal,
     });
@@ -135,5 +156,42 @@ describe('API Reservation Test Suite', async (t) => {
 
     strictEqual(response.status, 200);
     strictEqual(response.data.status, 'available');
+  });
+
+  it('Should return with status completed', async (t) => {
+    const responseCreate = await httpRequest({
+      method: 'POST',
+      path: '/reservation',
+      token: tokenRequester,
+      signal: t.signal,
+      payload: reservationMock,
+    });
+
+    const reservationId = responseCreate.data.id;
+    await httpRequest({
+      method: 'PATCH',
+      path: `/reservation/${reservationId}/accept`,
+      token: tokenManager,
+      signal: t.signal,
+    });
+
+    const response = await httpRequest({
+      method: 'PATCH',
+      path: `/reservation/${reservationId}/deliver`,
+      token: tokenManager,
+      signal: t.signal,
+    });
+    strictEqual(response.status, 200);
+    strictEqual(response.data.status, 'completed');
+  });
+
+  it('Should return 404 if deliver a fake reservation id', async (t) => {
+    const response = await httpRequest({
+      method: 'PATCH',
+      path: `/reservation/21322/deliver`,
+      token: tokenManager,
+      signal: t.signal,
+    });
+    strictEqual(response.status, 404);
   });
 });
