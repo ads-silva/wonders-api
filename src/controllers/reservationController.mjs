@@ -1,4 +1,4 @@
-import { create, findAll, findByPk, accept, reject } from '../services/reservationService.mjs';
+import { create, findAll, findByPk, accept, reject, deliver } from '../services/reservationService.mjs';
 
 export const createReservationOrder = async (req, res) => {
   const { body: payload, user } = req;
@@ -34,7 +34,7 @@ export const getReservationOrder = async (req, res) => {
     return;
   }
 
-  const reservationOrder = await findByPk(id);
+  const reservationOrder = await findByPk(id, true);
   res.status(200).json(reservationOrder);
 };
 
@@ -47,15 +47,25 @@ export const acceptReservationOrder = async (req, res) => {
   }
 
   try {
-    const reservationOrder = await accept(id);
-    res.status(200).json(reservationOrder);
-  } catch (error) {
-    if (error.message === 'invalid status') {
-      res.status(400).json({ message: 'Reservation with invalid status' });
-    } else {
-      console.log(error);
-      res.status(500).json({ message: 'Internal error' });
+    // Find reservation with products
+    const reservationOrder = await findByPk(id);
+
+    if (!reservationOrder) {
+      res.status(404).json({ message: 'Not found' });
+      return;
     }
+
+    // Check reservation status
+    if (reservationOrder.status !== 'pending') {
+      res.status(400).json({ message: 'Reservation with invalid status' });
+      return;
+    }
+
+    const responseData = await accept(id, reservationOrder);
+    res.status(200).json(responseData);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Internal error' });
   }
 };
 
@@ -69,7 +79,7 @@ export const rejectReservationOrder = async (req, res) => {
 
   try {
     // Find reservation with products
-    const reservationOrder = await findByPk(id);
+    const reservationOrder = await findByPk(id, true);
     if (!reservationOrder) {
       res.status(404).json({ message: 'Not found' });
       return;
@@ -81,6 +91,37 @@ export const rejectReservationOrder = async (req, res) => {
     }
 
     const responseData = await reject(id, reservationOrder);
+    res.status(200).json(responseData);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Internal error' });
+  }
+};
+
+export const deliverReservationOrder = async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    res.status(404).json({ message: 'Reservation not found' });
+    return;
+  }
+
+  try {
+    // Find reservation with products
+    const reservationOrder = await findByPk(id);
+
+    if (!reservationOrder) {
+      res.status(404).json({ message: 'Not found' });
+      return;
+    }
+
+    // Check reservation status
+    if (reservationOrder.status !== 'available') {
+      res.status(400).json({ message: 'Reservation with invalid status' });
+      return;
+    }
+
+    const responseData = await deliver(id, reservationOrder);
     res.status(200).json(responseData);
   } catch (error) {
     console.log(error);

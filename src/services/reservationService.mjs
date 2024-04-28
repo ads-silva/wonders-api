@@ -78,34 +78,28 @@ export const findAll = async () => {
   return reservationOrders;
 };
 
-export const findByPk = async (id) => {
+export const findByPk = async (id, expands = false) => {
   const reservationOrder = await getModels().reservationOrder.findOne({
     where: { id },
-    include: [
-      {
-        model: getModels().product,
-        as: 'products',
-        attributes: ['id', 'name', 'description'],
-        through: {
-          as: 'reservation',
-          attributes: ['amount', 'createdAt', 'updatedAt'],
+    ...(expands && {
+      include: [
+        {
+          model: getModels().product,
+          as: 'products',
+          attributes: ['id', 'name', 'description'],
+          through: {
+            as: 'reservation',
+            attributes: ['amount', 'createdAt', 'updatedAt'],
+          },
         },
-      },
-    ],
+      ],
+    }),
   });
 
   return reservationOrder;
 };
 
-export const accept = async (id) => {
-  // Find reservation with products
-  const reservationOrder = await findByPk(id);
-
-  // Check reservation status
-  if (reservationOrder.status !== 'pending') {
-    throw new Error('invalid status');
-  }
-
+export const accept = async (id, reservationOrder) => {
   // Upadate status
   reservationOrder.status = 'available';
   await getModels().reservationOrder.update(
@@ -153,4 +147,17 @@ export const reject = async (id, reservationOrder) => {
     if (transaction) await transaction.rollback();
     throw error;
   }
+};
+
+export const deliver = async (id, reservationOrder) => {
+  // Upadate status
+  reservationOrder.status = 'completed';
+  await getModels().reservationOrder.update(
+    {
+      status: 'completed',
+    },
+    { where: { id } },
+  );
+
+  return reservationOrder;
 };
