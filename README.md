@@ -59,6 +59,10 @@ Import the provided Postman collection file api-tests. `wonders-api.postman_coll
 ### 👥 Users and very strong passwords (😂):
     requester@mail.com / 123  
     manager@mail.com / 123
+    
+## To run
+1. To run, type the follow command:
+    `npm run start:dev`
 
     
 # Technologies Stack
